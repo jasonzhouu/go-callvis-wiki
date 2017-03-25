@@ -1,5 +1,3 @@
-# How it works
-
 The `-focus` flag is by default set to `main` since all the programs 
 have it and keeping focus empty by default would generate gigantic output.
 
