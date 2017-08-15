@@ -10,6 +10,12 @@ have it and keeping focus empty by default would generate gigantic output.
 
 Using only single package example is pretty straightforward since there are only calls inside that package.
 
+![callvis](https://cloud.githubusercontent.com/assets/1229233/24300848/147b3336-10ae-11e7-9702-bf376ce2870e.png)
+
+```
+go-callvis playground/callvis | dot -Tpng -o callvis.png 
+```
+
 **Code**:
 
 _main.go_
@@ -47,12 +53,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 * or have only **callee function** inside the _focused package_.
   - `http.(HandlerFunc).ServeHTTP()` - - > __`main.index()`__
-
-![callvis](https://cloud.githubusercontent.com/assets/1229233/24300848/147b3336-10ae-11e7-9702-bf376ce2870e.png)
-
-```
-go-callvis playground/callvis | dot -Tpng -o callvis.png 
-```
 
 
 ## Multiple packages
