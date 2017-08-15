@@ -64,12 +64,14 @@ You can also use empty focus which will show all the calls inside the program, a
 package main
 
 import (
-	"playground/callvis/api"
 	"net/http"
+	"playground/callvis/api"
 )
 
+var a = api.New()
+
 func main() {
-	api.SetupRoutes()
+	a.Setup()
 	http.ListenAndServe(":4321", nil)
 }
 ```
@@ -79,16 +81,28 @@ func main() {
 package api
 
 import (
-    "fmt"
-    "net/http"
+	"fmt"
+	"net/http"
 )
 
-func Index(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "index")
+type Api struct{}
+
+func New() *Api {
+	a := new(Api)
+	go a.loop()
+	return a
 }
 
-func SetupRoutes() {
+func (a *Api) loop() {
+	for {}
+}
+
+func (a *Api) Setup() {
 	http.HandleFunc("/", Index)
+}
+
+func Index(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "api index")
 }
 ```
 
@@ -96,28 +110,26 @@ func SetupRoutes() {
 
 - #### Focusing package `main`
   
-  Output doesn't show call to `http.HandleFunc()` and `fmt.Fprintf()`, because **neither caller nor callee are inside focused package**.
+  Output doesn't show call to `http.HandleFunc()`, `fmt.Fprintf()` or `(*Api).loop`, because those functions are called inside `api` package.
   
-  ![callvis_main](https://cloud.githubusercontent.com/assets/1229233/24291637/19f377b6-108a-11e7-99ab-a0bd1574479b.png)
+  ![callvis_main](http://imgur.com/HIgi7eW.png)
 
   `go-callvis -focus main -group pkg playground/callvis | dot -Tpng -o callvis.png`
 
 - #### Focusing package `api`
   
-  Output doesn't show call to `http.ListenAndServe()`, because **neither caller nor callee are inside focused package**. 
+  Output doesn't show call to `http.ListenAndServe()`, because that call is inside `main` package. 
   However it still shows `api.SetupRoutes()` call since it is inside `api` package.
 
-  ![callvis_api](https://cloud.githubusercontent.com/assets/1229233/24300617/55173e40-10ad-11e7-8c51-3d4f6d000952.png)
+  ![callvis_api](http://imgur.com/ohAoLwd.png)
 
   `go-callvis -focus api -group pkg playground/callvis | dot -Tpng -o callvis.png`
 
 - #### No focusing
 
-  By using `-limit` we can define import path prefix and packages without this prefix will be ignored. 
-  Same way the `-ignore` flag defines import path for ignoring packages. 
-  Both can contain multiple prefix paths.
+  This option will show all the calls inside program, although it's recommended to use `-limit` flag to define the scope of the packages included in the output. Same way the `-ignore` flag defines import path for ignoring packages. Both can contain multiple prefix paths.
 
-  ![callvis](https://cloud.githubusercontent.com/assets/1229233/24302966/a80b4270-10b4-11e7-9737-c27e1ab3b0a0.png)
+  ![callvis](http://imgur.com/6puJq6Q.png)
 
   `go-callvis -focus="" -limit playground/callvis -group pkg playground/callvis | dot -Tpng -o callvis.png`
 
