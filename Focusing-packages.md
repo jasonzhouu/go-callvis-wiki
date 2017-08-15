@@ -1,15 +1,11 @@
 ## Single package
 
-This case is pretty straightforward, it displays all calls *from* or *to* that package.
-
-  ![callvis](https://cloud.githubusercontent.com/assets/1229233/24300848/147b3336-10ae-11e7-9702-bf376ce2870e.png)
-
-  `go-callvis playground/callvis | dot -Tpng -o callvis.png`
-
 **Code**:
 
-_main.go_
+This case is pretty straightforward, it displays all calls **from** or **to** that package.
+
 ```go
+/* main.go */
 package main
 
 import (
@@ -31,32 +27,40 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-#### Output contains all the calls that:
+**Output**:
+
+  ![callvis](https://cloud.githubusercontent.com/assets/1229233/24300848/147b3336-10ae-11e7-9702-bf376ce2870e.png)
+
+  `go-callvis playground/callvis | dot -Tpng -o callvis.png`
+
+**It contains all the calls that**:
 
 * either have both **caller and callee function** inside the _focused package_,
-  - __`main.main()`__ --> __`main.setupRoutes()`__
+  
+  - __`main.main()`__ => __`main.setupRoutes()`__
 
 * or have only **caller function** inside the _focused package_,
-  - __`main.main()`__ --> `http.ListenAndServe()`
-  - __`main.setupRoutes()`__ --> `http.HandleFunc()`
-  - __`main.index()`__ --> `fmt.Fprintf()`
+  
+  - __`main.main()`__ => `http.ListenAndServe()`
+  - __`main.setupRoutes()`__ => `http.HandleFunc()`
+  - __`main.index()`__ => `fmt.Fprintf()`
 
 * or have only **callee function** inside the _focused package_.
-  - `http.(HandlerFunc).ServeHTTP()` - - > __`main.index()`__
+  
+  - `http.(HandlerFunc).ServeHTTP()` => __`main.index()`__
 
 
 ## Multiple packages
 
-If the program consists of multiple packages like in your case, you can choose another package for `-focus` or use empty focus 
-with relevant `-limit` and `-ignore` flags to constraint the size of output.
+If the program consists of multiple packages, the output will show the main package by default. 
+However you can use `-focus` flag to show another package. 
 
-The `-focus` flag is by default set to `main` since all the programs 
-have it and keeping focus empty by default would generate gigantic output.
+You can also use empty focus which will show all the calls inside the program, although it is recommended to use relevant `-limit` and `-ignore` flags to constraint the size of output, since without them it would most probably generate gigantic output.
 
-### Code
+**Code**:
 
-_main.go_
 ```go
+/* main.go */
 package main
 
 import (
@@ -70,8 +74,8 @@ func main() {
 }
 ```
 
-_api/api.go_
 ```go
+/* api/api.go */
 package api
 
 import (
@@ -92,7 +96,7 @@ func SetupRoutes() {
 
 - #### Focusing package `main`
   
-  Output doesn't show call to `http.HandleFunc()` and `fmt.Fprintf()`, because neither caller nor callee are inside focused package.
+  Output doesn't show call to `http.HandleFunc()` and `fmt.Fprintf()`, because **neither caller nor callee are inside focused package**.
   
   ![callvis_main](https://cloud.githubusercontent.com/assets/1229233/24291637/19f377b6-108a-11e7-99ab-a0bd1574479b.png)
 
@@ -100,7 +104,7 @@ func SetupRoutes() {
 
 - #### Focusing package `api`
   
-  Output doesn't show call to `http.ListenAndServe()`, because neither caller nor callee are inside focused package. 
+  Output doesn't show call to `http.ListenAndServe()`, because **neither caller nor callee are inside focused package**. 
   However it still shows `api.SetupRoutes()` call since it is inside `api` package.
 
   ![callvis_api](https://cloud.githubusercontent.com/assets/1229233/24300617/55173e40-10ad-11e7-8c51-3d4f6d000952.png)
@@ -127,7 +131,7 @@ func SetupRoutes() {
   `go-callvis -focus="" -limit "net/http,playground/callvis" -group pkg playground/callvis | dot -Tpng -o callvis.png`
 
 ----
-### Conclusion
+### Developer's notes
 
 To me it seems there is **missing a way** to show output similar to the last one **without the internal calls** of the std package.
 
