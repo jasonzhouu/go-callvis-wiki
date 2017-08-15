@@ -1,3 +1,3 @@
 Welcome to the go-callvis wiki!
 
-- ### [How it works](How-it-works)
+- ### [Focusing packages](Focusing-packages)
