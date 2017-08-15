@@ -8,7 +8,7 @@ have it and keeping focus empty by default would generate gigantic output.
 
 ## Single package
 
-Here it is pretty straightforward since only single package is used.
+Using only single package example is pretty straightforward since there are only calls inside that package.
 
 **Code**:
 
