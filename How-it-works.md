@@ -1,20 +1,10 @@
-The `-focus` flag is by default set to `main` since all the programs 
-have it and keeping focus empty by default would generate gigantic output.
-
-> Only one argument is supported currently (which has to be a *main package*). 
-> Other arguments after the first one are ignored, because important 
-> is the *main package* where the program starts, and the code analysis 
-> can figure out all other calls from there.
-
 ## Single package
 
-Using only single package example is pretty straightforward since there are only calls inside that package.
+This case is pretty straightforward, it displays all calls *from* or *to* that package.
 
-![callvis](https://cloud.githubusercontent.com/assets/1229233/24300848/147b3336-10ae-11e7-9702-bf376ce2870e.png)
+  ![callvis](https://cloud.githubusercontent.com/assets/1229233/24300848/147b3336-10ae-11e7-9702-bf376ce2870e.png)
 
-```
-go-callvis playground/callvis | dot -Tpng -o callvis.png 
-```
+  `go-callvis playground/callvis | dot -Tpng -o callvis.png`
 
 **Code**:
 
@@ -60,6 +50,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 If the program consists of multiple packages like in your case, you can choose another package for `-focus` or use empty focus 
 with relevant `-limit` and `-ignore` flags to constraint the size of output.
 
+The `-focus` flag is by default set to `main` since all the programs 
+have it and keeping focus empty by default would generate gigantic output.
+
 ### Code
 
 _main.go_
@@ -103,9 +96,7 @@ func SetupRoutes() {
   
   ![callvis_main](https://cloud.githubusercontent.com/assets/1229233/24291637/19f377b6-108a-11e7-99ab-a0bd1574479b.png)
 
-  ```
-  go-callvis -focus main -group pkg playground/callvis | ...
-  ```
+  `go-callvis -focus main -group pkg playground/callvis | dot -Tpng -o callvis.png`
 
 - #### Focusing package `api`
   
@@ -114,9 +105,7 @@ func SetupRoutes() {
 
   ![callvis_api](https://cloud.githubusercontent.com/assets/1229233/24300617/55173e40-10ad-11e7-8c51-3d4f6d000952.png)
 
-  ```
-  go-callvis -focus api -group pkg playground/callvis | ...
-  ```
+  `go-callvis -focus api -group pkg playground/callvis | dot -Tpng -o callvis.png`
 
 - #### No focusing
 
@@ -126,9 +115,7 @@ func SetupRoutes() {
 
   ![callvis](https://cloud.githubusercontent.com/assets/1229233/24302966/a80b4270-10b4-11e7-9737-c27e1ab3b0a0.png)
 
-  ```
-  go-callvis -focus="" -limit playground/callvis -group pkg playground/callvis | ...
-  ```
+  `go-callvis -focus="" -limit playground/callvis -group pkg playground/callvis | dot -Tpng -o callvis.png`
 
 - #### Including `net/http`
 
@@ -137,9 +124,7 @@ func SetupRoutes() {
 
   [![hugethumb](https://cloud.githubusercontent.com/assets/1229233/24303891/eb0fe32a-10b7-11e7-8989-0ac49f28c30f.png)](https://cloud.githubusercontent.com/assets/1229233/24303606/e5e8d4ac-10b6-11e7-8712-0a6aa2441cda.jpg)
 
-  ```
-  go-callvis -focus="" -limit "net/http,playground/callvis" -group pkg playground/callvis | ...
-  ```
+  `go-callvis -focus="" -limit "net/http,playground/callvis" -group pkg playground/callvis | dot -Tpng -o callvis.png`
 
 ----
 ### Conclusion
